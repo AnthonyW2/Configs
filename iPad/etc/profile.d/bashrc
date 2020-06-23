@@ -1,0 +1,40 @@
+# Bash configuration for Anthony Wilson (iPad Air 2 - iPadOS 13.3.1)
+
+
+
+# Only do something if running interactively
+[[ $- != *i* ]] && return
+
+
+
+# ls aliases
+alias ls='ls —-color=auto'
+alias la='ls —-color=auto -a'
+alias ll='ls —-color=auto -l'
+alias l='ls —-color=auto -al'
+
+# Navigation
+alias ~='cd ~'
+alias ..='cd ..'
+
+# Respringing
+alias respring='killall SpringBoard'
+
+
+if [[ "\u" == "root" ]]; then
+  PS1='[Root \w]\$ '
+  echo "You are now logged in as the root user"
+elif [[ "\u" == "mobile" ]]; then
+  PS1='[Anthony \w]\$ '
+  echo "You are now logged in as the mobile user"
+fi
+
+#if [ "\u" = "root" ]; then
+#  source /var/root/.bashrc
+#  echo "You are Root"
+#elif [ "\u" = "mobile" ]; then
+#  source /var/mobile/.bashrc
+#  echo "You are Root"
+#fi
+
+echo "Now logged in as: \u"
