@@ -1,0 +1,17 @@
+iOS Apps:
+ Utility
+- FireFox
+- Gmail
+- Outlook
+- Explain Everything
+- Discord
+- Google Drive, Docs, Sheets, Slides
+
+
+
+Jailbreak Tweaks:
+- OpenSSH
+- Filza File Manager
+- NewTerm2
+- CCModules
+- MilkyWay2
