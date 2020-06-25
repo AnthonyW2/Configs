@@ -9,7 +9,7 @@ Jailbreak Tweaks:
 
 iOS Apps:
 
- Utility
+ Utility:
 - FireFox
 - Explain Everything
 - Google Drive, Docs, Sheets, Slides
@@ -18,6 +18,14 @@ iOS Apps:
 - Gmail
 - Outlook
 - Discord
+
+ Networking:
+- 1.1.1.1
+- AdBlock Plus
+- AdGuard
+- OnionBrowser
+- LastPass
+- SpeedTest
 
  Games:
 - Terraria
