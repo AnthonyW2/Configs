@@ -1,17 +1,34 @@
-iOS Apps:
- Utility
-- FireFox
-- Gmail
-- Outlook
-- Explain Everything
-- Discord
-- Google Drive, Docs, Sheets, Slides
-
-
-
 Jailbreak Tweaks:
 - OpenSSH
 - Filza File Manager
 - NewTerm2
 - CCModules
 - MilkyWay2
+
+
+
+iOS Apps:
+
+ Utility
+- FireFox
+- Explain Everything
+- Google Drive, Docs, Sheets, Slides
+
+ Communication:
+- Gmail
+- Outlook
+- Discord
+
+ Games:
+- Terraria
+- Minecraft
+- Don't Starve
+- BTD5
+- BTD6
+- Plague Inc.
+- Geometry Dash
+- Race the Sun
+- BADLAND
+- BADLAND 2
+- Commute
+- Telepaint
