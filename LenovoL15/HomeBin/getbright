@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# 28 October 2020
+# 20-10-28
+
+# Get the brightness of the backlight
+
+cat /sys/class/backlight/amdgpu_bl0/brightness
+
+exit 0
