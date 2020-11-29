@@ -1,0 +1,22 @@
+#!/bin/bash
+
+#3 June 2020
+#3/6/2020
+
+# Turn the compositor (Picom) on/off
+
+PicomPID=`pidof picom`
+
+#The double square brackets & the white spaces are necessary to stop bash from misinterpreting the statement
+#Using " -z " is the same as using " == '' ", it checks if a string is exmpty
+if [[ -z "$PicomPID" ]]; then
+  echo "Picom is not running, starting Picom..."
+  picom &
+  notify-send "Started Picom"
+else
+  echo "Picom is running, stopping Picom..."
+  killall picom
+  notify-send "Stopped Picom"
+fi
+
+exit 0

@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# 3 November 2020
+# 20-10-3
+
+# Get the hardware temperature stats
+
+
+### Get values from files ###
+
+thermals=$(cat /proc/acpi/ibm/thermal)
+gputemp=$(expr $(cat /sys/class/drm/card0/device/hwmon/hwmon*/temp1_input) / 1000)
+ssdtemp=$(sudo smartctl --all /dev/nvme0n1 | grep "Temperature:")
+
+echo "ACPI ${thermals}"
+echo "GPU Temperature:        ${gputemp}"
+echo "SSD ${ssdtemp/                        /        }"
+
+exit 0

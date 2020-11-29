@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# 11 November 2020
+# 20-11-11
+
+# Remove '$RECYCLE.BIN' and 'System Volume Information'
+
+
+
+if [[ -d "/files/\$RECYCLE.BIN" ]]; then
+  rm -rf "/files/\$RECYCLE.BIN"
+  echo "Removed Windows Recycle Bin"
+fi
+
+if [[ -d "/files/System Volume Information" ]]; then
+  rm -rf "/files/System Volume Information"
+  echo "Removed Windows 'System Volume Information'"
+fi
+
+#Set ownership of all files to the "anthony" user & group
+chown anthony:anthony /files -R
+
+#Set permissions of all files
+chmod 755 /files -R
+
+#List any files with left over extended attributes
+ls -algR /files | grep "@"

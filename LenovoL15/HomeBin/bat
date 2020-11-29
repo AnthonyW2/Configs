@@ -1,0 +1,87 @@
+#!/bin/bash
+
+# 28 October 2020
+# 20-10-28
+
+# Get the battery stats without root permissions
+
+
+### Get values from files and print out the info (in mWh) ###
+
+fulldesign=$(expr `cat /sys/class/power_supply/BAT0/energy_full_design` / 1000)
+currentcap=$(expr `cat /sys/class/power_supply/BAT0/energy_full` / 1000)
+currentenergy=$(expr `cat /sys/class/power_supply/BAT0/energy_now` / 1000)
+currentpower=$(expr `cat /sys/class/power_supply/BAT0/power_now` / 1000)
+
+printf "Power cycles:             "
+cat /sys/class/power_supply/BAT0/cycle_count
+
+printf "Charge full design:       "
+printf "$fulldesign mWh\n"
+
+printf "Current capacity/health:  "
+printf "$currentcap mWh\n"
+
+printf "Current energy:           "
+printf "$currentenergy mWh\n"
+
+printf "Current power:            "
+if [[ $(cat /sys/class/power_supply/BAT0/status) = "Discharging" ]]; then
+  printf "-"
+fi
+printf "$currentpower mW\n"
+
+#printf "Current status: "
+#cat /sys/class/power_supply/BAT0/status
+
+echo ""
+
+
+### Calculate percentages (health and charge) ###
+
+#printf "Charge: "
+#printf $(expr $(($currentenergy*100)) / $currentcap)
+#printf "%%\n"
+
+printf "Charge:                   "
+charge=$(($(($currentenergy*1000)) / $currentcap))
+printf $(($charge / 10))
+printf "."
+printf $(($charge % 10))
+printf "%%\n"
+
+#printf "Capacity/health: "
+#printf $(expr $(($currentcap*100)) / $fulldesign)
+#printf "%%\n"
+
+printf "Capacity/health:          "
+capacity=$(($(($currentcap*1000)) / $fulldesign))
+printf $(($capacity / 10))
+printf "."
+printf $(($capacity % 10))
+printf "%%\n"
+
+
+### Calculate time remaining until empty/full ###
+
+if [[ ! $currentpower = 0 ]]; then
+  # Get the rough amount of time until empty (in tenths of hours)
+  roughtime=$(($(($currentenergy*10)) / $currentpower))
+  # If the battery state is "charging" calculate the rough amount of time until full (in tenths of hours)
+  if [[ $(cat /sys/class/power_supply/BAT0/status) = "Charging" ]]; then
+    roughtime=$(($(($(($currentcap-$currentenergy))*10)) / $currentpower))
+  fi
+  # Print the hours
+  printf "Estimated time:           "
+  printf $(($roughtime / 10))
+  if [[ $(($roughtime / 10)) = 1 ]]; then
+    printf " Hour "
+  else
+    printf " Hours "
+  fi
+  # Print the minutes
+  printf $(($(($roughtime % 10))*6))
+  printf " Minutes\n"
+fi
+
+exit 0

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# 7 October 2020
+# 20-10-7
+
+#Get the size of the given git repo in KB
+echo $1 | perl -ne 'print $1 if m!([^/]+/[^/]+?)(?:\.git)?$!' | xargs -I{} curl -s -k https://api.github.com/repos/'{}' | grep size

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# 20 November 2020
+# 20-11-20
+
+# Restart keyboard if it gets stuck typing a key
+
+# Needs to be run with root permissions
+
+rmmod atkbd ; modprobe atkbd reset=1
