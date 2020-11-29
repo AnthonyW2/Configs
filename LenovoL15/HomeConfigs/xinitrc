@@ -1,0 +1,14 @@
+# Apply Xresources settings
+[[ -f ~/.Xresources ]] && xrdb -merge -I$HOME ~/.Xresources
+
+
+# Set the touchpad properties (only works with libinput, synaptics requires slightly different property names)
+#xinput set-prop 12 288 1
+xinput set-prop "SynPS/2 Synaptics TouchPad" "libinput Tapping Enabled" 1
+#xinput set-prop 12 308 0.3
+xinput set-prop "SynPS/2 Synaptics TouchPad" "libinput Accel Speed" 0.3
+#xinput set-prop 12 316 1
+xinput set-prop "SynPS/2 Synaptics TouchPad" "libinput Disable While Typing Enabled" 0
+
+# Start AwesomeWM
+exec awesome

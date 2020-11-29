@@ -1,0 +1,129 @@
+# Bash configuration for Anthony Wilson
+
+
+
+# Include the home bin directory in the path
+export PATH=$PATH:$HOME/.bin
+
+# Ignore duplicate commands when saving to bash history
+export HISTCONTROL=ignoredups:erasedups
+#export HISTORY=3000
+
+# Set the LC_ALL locale to C to prevent error messages
+export LC_ALL=C;
+
+# Only do something if running interactively
+[[ $- != *i* ]] && return
+
+
+
+# Aliases:
+
+#Current project aliases
+alias chessloc='sloc /srv/http/4DChess && echo "" && echo "" && sloc /srv/http/4DChess/Play/game.js'
+alias syncchess='syncedits -r=cq60 -p=4DChess -v'
+alias fragments='mangohud "/files/Games/Fragments of Euclid/FragmentsOfEuclid.x86_64" "$@" -force-opengl'
+
+#ls aliases
+alias ls='ls --color=auto'
+#alias ls='exa'
+alias la='exa -a'
+alias ll='exa -lg'
+alias l='exa -alg'
+
+#Navigation
+alias ..='cd ..'
+alias ~='cd ~'
+
+#Grep aliases
+alias grep='grep --color=auto'
+
+#Copying aliases
+alias cp='cp -i' #Ask before overwriting an existing file
+
+#Moving aliases
+alias mv='mv -i' #Ask before overwriting an existing file
+
+#Because I use this command all the time
+alias x='startx'
+
+#Pacman shortcuts
+#alias update='sudo pacman -Syu'
+alias update='sudo update'
+alias pac='sudo pacman'
+alias updateaur='yay -Sua'
+
+#Quicker way to see battery stats
+alias battery='sudo tlp-stat -b'
+
+#Quicker way to launch alsamixer focusing the Intel sound card
+alias volume='alsamixer -c 0'
+
+#Save a few keypresses when shutting down (this is made redundant by WM keybind)
+alias poweroff='shutdown now'
+
+#Run the autostart file manually
+alias autostart='sh ~/.autostart.sh'
+
+#Re-sync system & hardware clock
+alias resetclock='sudo timedatectl set-ntp true && sudo hwclock --systohc && timedatectl'
+
+#SSH server
+alias startssh='sudo systemctl start sshd'
+alias stopssh='sudo systemctl stop sshd'
+alias logssh='journalctl -u sshd | tail -100 | less'
+
+#Apache web server
+alias startapache='sudo systemctl start httpd'
+alias stopapache='sudo systemctl stop httpd'
+alias logapache='tail -200 /var/log/httpd/access_log | less'
+
+#Mounting
+alias mountwin='sudo mount /dev/nvme0n1p3 /windows -o umask=000'
+alias umountwin='sudo umount /windows'
+alias mountmint='sudo mount /dev/nvme0n1p8 /mnt/mint'
+alias umountmint='sudo umount /mnt/mint'
+alias pmount='sudo mount -o umask=000'
+alias usermount='sudo mount -o umask=000'
+#Remote FS mounting
+alias mountipad='sshfs mobile@192.168.0.155:/ /mnt/ipad'
+alias umountipad='fusermount3 -u /mnt/ipad'
+alias mountcq60='sshfs -p2202 anthony@192.168.0.17:/ /mnt/cq60'
+alias umountcq60='fusermount3 -u /mnt/cq60'
+
+
+#Empty Trash
+alias emptytrash='sudo rm -rf ~/.local/share/Trash/files/*; sudo rm -rf ~/.local/share/Trash/info/*'
+
+#Faster way to use systemctl
+alias susys='sudo systemctl'
+
+#Clean up the permissions and extended attributes of ~/Files
+alias cleanfiles='sudo cleansefiles'
+alias cleansefiles='sudo cleansefiles'
+
+
+#Prepend 'sudo' to commands that always require it
+alias systemctl='sudo systemctl'
+alias powertop='sudo powertop'
+alias restartkeyboard='sudo restartkeyboard'
+alias mount='sudo mount'
+alias umount='sudo umount'
+
+#Faster way to launch a root file manager (disabled because it's highly recommended NOT to run GUI applications as root)
+#alias rootfm='sudo pcmanfm'
+
+
+
+# PSx prompt formats:
+
+#PS1='[\u@\h \W]\$ '     #Uppercase '\W' displays folder name
+#PS1='[Anthony \w]\$ '   #Lowercase '\w' displays path
+#PS1='[Anthony $PWD]\$ ' #Displays full directory path
+#PS1='\e[31m[\e[32mAnthony \e[34m\w\e[31m]\$\e[0m '    #With colours
+PS1='\[\e[0;31m\][\[\e[0;32m\]Anthony \[\e[0;34m\]\w\[\e[0;31m\]]\$\[\e[0m\] '    #With colours (proper formatting to give actual text length in shell)
+
+
+
+#Broot
+#source /home/anthony/.config/broot/launcher/bash/br
