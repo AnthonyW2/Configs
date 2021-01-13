@@ -175,9 +175,9 @@ applicationsmenu = {
 }
 
 mediactrlsmenu = {
-  { "Pause Cmus", function() awful.spawn.with_shell("") end },
-  { "Next Song", function() awful.spawn.with_shell("") end },
-  { "Previous Song", function() awful.spawn.with_shell("") end },
+  { "Pause Cmus", function() awful.spawn.with_shell("cmus-remote -u") end },
+  { "Next Song", function() awful.spawn.with_shell("cmus-remote -n") end },
+  { "Previous Song", function() awful.spawn.with_shell("cmus-remote -r") end },
 }
 
 mymainmenu = awful.menu({
@@ -448,6 +448,14 @@ globalkeys = gears.table.join(
     end,
     {description = "Open terminal", group = "Applications"}
   ),
+  awful.key(
+    { "Mod1", "Control" },
+    "Return",
+    function()
+      awful.spawn(terminal)
+    end,
+    {description = "Open terminal", group = "Applications"}
+  ),
   -- Open XTerm terminal emulator
   awful.key(
     { modkey },
@@ -469,6 +477,14 @@ globalkeys = gears.table.join(
   -- PCManFM
   awful.key(
     { modkey },
+    "/",
+    function()
+      awful.spawn.with_shell("pcmanfm")
+    end,
+    {description = "Open file manager", group = "Applications"}
+  ),
+  awful.key(
+    { "Mod1", "Control" },
     "/",
     function()
       awful.spawn.with_shell("pcmanfm")
@@ -530,6 +546,24 @@ globalkeys = gears.table.join(
     end,
     {description = "Run Dmenu", group = "Launcher"}
   ),
+  -- Run rofi, with only common applications in the list
+  awful.key(
+    { modkey, "Mod1" },
+    "Return",
+    function()
+      awful.spawn.with_shell("rofi -show run")
+    end,
+    {description = "Launch common apps", group = "Launcher"}
+  ),
+  -- Run "rofi -show window", which is the equivalent of alt+tab on Windows
+  awful.key(
+    { "Mod1" },
+    "Tab",
+    function()
+      awful.spawn.with_shell("rofi -show window")
+    end,
+    {description = "Go to application", group = "Launcher"}
+  ),
   
   
   --- Custom Functions ---
@@ -565,7 +599,7 @@ globalkeys = gears.table.join(
     { modkey, "Control" },
     "c",
     function()
-      awful.spawn.with_shell("bash ~/.bin/toggle-compositor")
+      awful.spawn.with_shell("bash ~/.bin/togglecompositor")
     end,
     {description = "Start/Stop compositor", group = "Display"}
   ),
@@ -1075,7 +1109,8 @@ awful.rules.rules = {
       -- and the name shown there might not match defined rules here.
       name = {
         "Event Tester",  -- xev.
-        "Galculator"
+        "galculator",
+        "Execute File"  -- "Execute File" confirmation window created by PCManFM
       },
       role = {
         "AlarmWindow",  -- Thunderbird's calendar.

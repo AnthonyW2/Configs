@@ -9,11 +9,12 @@
 ### Get values from files ###
 
 thermals=$(cat /proc/acpi/ibm/thermal)
+thermals2=${thermals/	/        }
 gputemp=$(expr $(cat /sys/class/drm/card0/device/hwmon/hwmon*/temp1_input) / 1000)
 ssdtemp=$(sudo smartctl --all /dev/nvme0n1 | grep "Temperature:")
 
-echo "ACPI ${thermals}"
-echo "GPU Temperature:        ${gputemp}"
-echo "SSD ${ssdtemp/                        /        }"
+echo "ACPI ${thermals2/temp/Temp}"
+echo "GPU Temperature:          ${gputemp}"
+echo "SSD ${ssdtemp/                        /          }"
 
 exit 0

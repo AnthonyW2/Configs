@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# 21-1-12
+
+# Set the PRIMARY, SECONDARY or CLIPBOARD text buffers
+
+if [[ $2 = "p" ]] || [[ $2 = "1" ]]; then
+  printf "$1" | xclip -selection primary
+  echo "Copied to primary selection"
+  
+elif [[ $2 = "s" ]] || [[ $2 = "2" ]]; then
+  printf "$1" | xclip -selection secondary
+  echo "Copied to secondary selection"
+  
+elif [[ $2 = "c" ]] || [[ $2 = "0" ]]; then
+  printf "$1" | xclip -selection clipboard
+  echo "Copied to clipboard"
+  
+else
+  printf "$1" | xclip
+  echo "Copied to primary selection"
+  
+fi
+
+exit 0

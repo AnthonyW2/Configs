@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# 12 August 2020
+# 20-8-12
+
+if [[ -f "$1" ]]; then
+  echo "SLOC in the specified file:"
+  
+  #Both of these commands do the same thing:
+  #sed '/^\s*$/d' "$1" | wc -l
+  grep -cve '^\s*$' "$1"
+  echo
+  
+  echo "LOC in the specified file:"
+  cat "$1" | wc -l
+  echo
+  
+  echo "Single-line comments (//) detected in the specified file:"
+  grep -c "//" "$1"
+elif [[ -d "$1" ]]; then
+  echo "SLOC in specified directory recursively:"
+  find "$1" -print | egrep '\.php|\.as|\.sql|\.css|\.js' | grep -v '\.svn' | xargs cat | sed '/^\s*$/d' | wc -l
+  echo
+  
+  echo "LOC in specified directory recursively:"
+  find "$1" -print | egrep '\.php|\.as|\.sql|\.css|\.js' | grep -v '\.svn' | xargs cat | wc -l
+else
+  echo "Invalid option: $1"
+fi
+
+#find . -path './exclude' -prune -o -path './exclude' -prune -o -path './exclude' -prune -o -path './exclude' -prune -o -print | egrep '\.php|\.as|\.sql|\.css|\.js' | grep -v '\.svn' | xargs cat | sed '/^\s*$/d' | wc -l

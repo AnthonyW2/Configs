@@ -1,0 +1,105 @@
+#!/bin/bash
+
+#6 November 2020
+#20-11-6
+
+# Print out common system information
+
+
+# First print the date & time
+date
+echo "----------------"
+
+
+# Temperatures:
+thermals=$(cat /proc/acpi/ibm/thermal)
+thermals2=${thermals/	/        }
+gputemp=$(($(cat /sys/class/drm/card0/device/hwmon/hwmon*/temp1_input) / 1000))
+ssdtemp=$(sudo smartctl --all /dev/nvme0n1 | grep "Temperature:")
+
+echo "ACPI ${thermals2/temp/Temp}"
+echo "GPU Temperature:          ${gputemp}"
+echo "SSD ${ssdtemp/                        /          }"
+
+echo "----------------"
+
+
+# Memory Info:
+memory=($(free))
+totalram=${memory[7]}
+totalusedram=$(($totalram-${memory[9]}))
+printf "Used Memory:              $((${memory[8]}/1024))/$(($totalram/1024)) MiB ($(($((${memory[8]}*100))/$totalram))%%)\n"
+printf "Total Used Memory:        $(($totalusedram/1024))/$(($totalram/1024)) MiB ($(($(($totalusedram*100))/$totalram))%%)\n"
+
+echo "----------------"
+
+
+# GPU Info:
+printf "GPU Usage:                $(cat /sys/class/drm/card0/device/gpu_busy_percent)%%\n"
+
+totalvram=$(cat /sys/class/drm/card0/device/mem_info_vram_total)
+usedvram=$(cat /sys/class/drm/card0/device/mem_info_vram_used)
+printf "VRAM Usage:               $(($usedvram/1048576))/$(($totalvram/1048576)) MiB ($(($(($usedvram*100))/$totalvram))%%)\n"
+
+echo "----------------"
+
+
+# CPU Info:
+#
+#echo "----------------"
+
+
+# Battery Info:
+currentcap=$(expr `cat /sys/class/power_supply/BAT0/energy_full` / 1000)
+currentenergy=$(expr `cat /sys/class/power_supply/BAT0/energy_now` / 1000)
+currentpower=$(expr `cat /sys/class/power_supply/BAT0/power_now` / 1000)
+
+printf "Current energy:           "
+printf "$currentenergy mWh\n"
+
+printf "Current power:            "
+if [[ $(cat /sys/class/power_supply/BAT0/status) = "Discharging" ]]; then
+  printf "-"
+fi
+printf "$currentpower mW\n"
+
+printf "Charge:                   "
+charge=$(($(($currentenergy*1000)) / $currentcap))
+printf $(($charge / 10))
+printf "."
+printf $(($charge % 10))
+printf "%%\n"
+
+if [[ ! $currentpower = 0 ]]; then
+  # Get the rough amount of time until empty (in tenths of hours)
+  roughtime=$(($(($currentenergy*10)) / $currentpower))
+  # If the battery state is "charging" calculate the rough amount of time until full (in tenths of hours)
+  if [[ $(cat /sys/class/power_supply/BAT0/status) = "Charging" ]]; then
+    roughtime=$(($(($(($currentcap-$currentenergy))*10)) / $currentpower))
+  fi
+  # Print the hours
+  printf "Estimated time:           "
+  printf $(($roughtime / 10))
+  if [[ $(($roughtime / 10)) = 1 ]]; then
+    printf " Hour "
+  else
+    printf " Hours "
+  fi
+  # Print the minutes
+  printf "$(($(($roughtime % 10))*6))"
+  printf " Minutes\n"
+fi
+
+
+
+
+exit 0
+
+
+
+
+
+
+
+
+

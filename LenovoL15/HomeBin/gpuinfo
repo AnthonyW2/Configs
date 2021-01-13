@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# 29 November 2020
+# 20-11-29
+
+# Get the GPU stats
+
+printf "Usage:                    $(cat /sys/class/drm/card0/device/gpu_busy_percent)%%\n"
+
+frequencies=($(cat /sys/class/drm/card0/device/pp_dpm_sclk))
+printf "Frequencies:              ${frequencies[3]}\n"
+
+printf "Temperature:              $(($(cat /sys/class/drm/card0/device/hwmon/hwmon*/temp1_input)/1000))°C\n"
+
+totalvram=$(cat /sys/class/drm/card0/device/mem_info_vram_total)
+usedvram=$(cat /sys/class/drm/card0/device/mem_info_vram_used)
+
+printf "VRAM Usage:               $(($usedvram/1048576))/$(($totalvram/1048576)) MiB ($(($(($usedvram*100))/$totalvram))%%)\n"
+
+exit 0

@@ -1,0 +1,28 @@
+#!/bin/bash
+
+#14 November 2020
+#20-11-14
+
+# Start/restart Picom with a high-contrast GLSL shader applied
+
+PicomPID=`pidof picom`
+
+# Kill Picom if it is already running
+if [[ ! -z "$PicomPID" ]]; then
+  echo "Picom is running, stopping Picom..."
+  killall picom
+  notify-send "Stopped Picom"
+fi
+
+# Make sure the given HC filter number is valid
+if [[ -z $1 || $1 -lt 1 || $1 -gt 2 ]];then
+  echo "Specify a valid high contrast filter"
+  exit 1
+fi
+
+# Start Picom with the filter
+picom --backend glx --force-win-blend --glx-fshader-win "$(cat /home/anthony/.config/picom/Shaders/HighContrast/HC${1}.glsl)" &
+
+notify-send "Started Picom with high contrast shader $1"
+
+exit 0
