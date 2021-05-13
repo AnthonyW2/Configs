@@ -22,12 +22,13 @@ export LC_ALL=C;
 
 #Current project aliases
 alias chessloc='sloc /srv/http/4D/4DChess && echo "" && echo "" && sloc /srv/http/4D/4DChess/Play/game.js'
-alias syncchess='syncedits -r=cq60 -p=4DChess -v'
-alias syncsite='syncedits -r=cq60 -p=MainSite -v'
-alias syncchessl='syncedits -l -p=4DChess -v'
-alias syncsitel='syncedits -l -p=MainSite -v'
+#alias syncchess='syncedits -r=cq60 -p=4DChess -v'
+#alias syncsite='syncedits -r=cq60 -p=MainSite -v'
+#alias syncchessl='syncedits -l -p=4DChess -v'
+#alias syncsitel='syncedits -l -p=MainSite -v'
 alias fragments='mangohud "/files/Games/Fragments of Euclid/FragmentsOfEuclid.x86_64" "$@" -force-opengl'
 alias cdrtx='cd "/files/UMI Robot/UMI-RTX-RT100/PythonAPI"'
+alias cdc++='cd /files/Code/C++'
 
 #ls aliases
 alias ls='ls --color=auto'
@@ -58,13 +59,18 @@ alias update='sudo update'
 alias pac='sudo pacman'
 alias updateaur='yay -Sua'
 
-#Quicker way to see battery stats
+#Battery stuff
 alias battery='sudo tlp-stat -b'
+alias setbat='sudo setchargethresholds'
+alias hbat='setbat 40 60'
 
+#System monitoring
 alias sysmon='watch -n 0.5 -t sysinfo'
+alias nload='nload wlp3s0 enp2s0f0 lo'
+alias ssdinfo='sudo smartctl -A /dev/nvme0n1'
 
 #Quicker way to launch alsamixer focusing the correct sound card
-alias volume='alsamixer -c 1'
+alias audio='alsamixer -c 1'
 
 #Save a few keypresses when shutting down (this is made redundant by WM keybind)
 alias poweroff='shutdown now'
@@ -92,6 +98,8 @@ alias logssh='journalctl -u sshd | tail -100 | less'
 alias startapache='sudo systemctl start httpd'
 alias stopapache='sudo systemctl stop httpd'
 alias logapache='tail -200 /var/log/httpd/access_log | less'
+alias apachelog='tail -f /var/log/httpd/access_log'
+alias apacheerrors='tail -f /var/log/httpd/error_log'
 
 #Mounting
 alias mountwin='sudo mount /dev/nvme0n1p3 /windows -o umask=000'
