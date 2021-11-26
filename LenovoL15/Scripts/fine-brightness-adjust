@@ -1,0 +1,65 @@
+#!/bin/bash
+
+# 2021-2-11
+
+# Increase or decrease the brightness of the display, by an amount relative to the current brightness
+
+# 0-10: 2
+# 10-20: 5
+# 20-250: 10
+
+if [[ ! $1 = "" && ! $1 = 0 ]]; then
+  
+  # Get the current brightness of the display
+  current=$(cat /sys/class/backlight/amdgpu_bl0/brightness)
+  
+  increment=$1
+  
+  if [[ $1 = 1 ]]; then
+    # Increase the brightness
+    if [[ $current -ge 0 && $current -lt 10 ]]; then
+      increment=2
+      echo "Add 2"
+    elif [[ $current -ge 10 && $current -lt 20 ]]; then
+      increment=5
+      echo "Add 5"
+    elif [[ $current -ge 20 && $current -lt 250 ]]; then
+      increment=10
+      echo "Add 10"
+    elif [[ $current -ge 250 ]]; then
+      echo "250" > /sys/class/backlight/amdgpu_bl0/brightness
+      echo "Set to 250"
+      exit 0
+    fi
+    
+  elif [[ $1 = -1 ]]; then
+    # Decrease the brightness
+    if [[ $current -lt 2 ]]; then
+      echo "0" > /sys/class/backlight/amdgpu_bl0/brightness
+      echo "Set to 0"
+      exit 0
+    elif [[ $current -ge 2 && $current -le 10 ]]; then
+      increment=-2
+    elif [[ $current -gt 10 && $current -le 20 ]]; then
+      increment=-5
+    elif [[ $current -gt 20 && $current -le 250 ]]; then
+      increment=-10
+    elif [[ $current -gt 250 ]]; then
+      echo "250" > /sys/class/backlight/amdgpu_bl0/brightness
+      echo "Set to 250"
+      exit 0
+    fi
+    
+  else
+    echo "Input either 1 or -1"
+  fi
+  
+  echo "Set to $(($current + $increment))"
+  
+  # Write the new brightness value to the device file
+  echo $(($current + $increment)) > /sys/class/backlight/amdgpu_bl0/brightness
+else
+  echo "Input either 1 or -1"
+fi
+
+exit 0

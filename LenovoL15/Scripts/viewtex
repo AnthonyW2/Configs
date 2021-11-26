@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# 21-9-3
+
+PID=$$
+texfile=$1
+
+echo $PID
+
+type=$(file ${texfile})
+
+echo $type
+
+if [[ $type == *"LaTeX"* ]]; then
+  
+  pdflatex -output-directory=/tmp -jobname="tex_${PID}" "${texfile}"
+  
+else
+  
+  pdftex -output-directory=/tmp -jobname="tex_${PID}" "${texfile}"
+  
+fi
+
+#touch "/tmp/tex_${PID}"
+
+#exa /tmp
+
+evince "/tmp/tex_${PID}.pdf"
+
+rm "/tmp/tex_${PID}.pdf"
+rm "/tmp/tex_${PID}.log"
+rm "/tmp/tex_${PID}.aux"
+

@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# 21-5-24
+
+# Convert the input amount of ssd units and convert them to GiB and GB
+
+
+
+bytes=$((${1//,/} * 512000))
+
+echo "$(($bytes / 1000000000 )) GB"
+echo "$(($bytes / 1073741824 )) GiB"
+
+exit 0

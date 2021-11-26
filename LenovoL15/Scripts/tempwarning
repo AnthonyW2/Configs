@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# 2021-4-25
+
+# Check the CPU temps and notify the user if something is wrong
+
+
+thermals=$(cat /proc/acpi/ibm/thermal)
+
+if [[ "${thermals:14:4}" == "-128" ]]; then
+  
+  notify-send "ISA Temperature Error" -u critical
+  
+fi
+
+exit 0

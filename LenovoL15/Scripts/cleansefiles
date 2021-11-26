@@ -21,7 +21,7 @@ fi
 chown anthony:anthony /files -R
 
 #Set permissions of all files
-chmod 755 /files -R
+#chmod 755 /files -R
 
 #List any files with left over extended attributes
 ls -algR /files | grep "@"

@@ -7,4 +7,9 @@
 
 # Needs to be run with root permissions
 
-rmmod atkbd ; modprobe atkbd reset=1
+rmmod atkbd
+modprobe atkbd reset=1
+
+echo "Restarted keyboard"
+
+#runuser -l anthony -c 'DISPLAY=":0" notify-send "Restarted keyboard"'

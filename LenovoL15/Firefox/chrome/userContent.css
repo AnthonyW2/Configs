@@ -1,0 +1,17 @@
+/*
+Anthony Wilson
+
+userContent.css - Override the CSS on certain webpages
+*/
+
+/* Make the bookmark icons on the New Tab page bigger */
+a.top-site-button div.tile div.icon-wrapper {
+  width: 56px !important;
+  height: 56px !important;
+}
+
+/* Remove the pin symbol from the bookmarks on the New Tab page */
+div.icon.icon-pin-small {
+  display: none !important;
+}
+

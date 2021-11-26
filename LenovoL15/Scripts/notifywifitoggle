@@ -1,0 +1,17 @@
+#!/bin/bash
+
+#2021-3-9
+
+# Notify the user that the Wifi card has been enabled/disabled
+
+#sleep 0.5
+
+WifiUnavailable=$(nmcli | grep "wlp3s0: unavailable")
+
+if [[ -z "$WifiUnavailable" ]]; then
+  notify-send "Wifi Enabled"
+else
+  notify-send "Wifi Disabled"
+fi
+
+exit 0

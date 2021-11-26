@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# 21-7-2
+
+# Display regular SMART info and add data read/written in GB & GiB
+
+#To suppress sudo logging, https://stackoverflow.com/questions/14277116/suppress-log-entry-for-single-sudo-commands
+
+smartctlout=$(sudo smartctl -A /dev/nvme0n1 | grep --after-context=16 "Critical Warning")
+
+echo "$smartctlout" | grep --after-context=4 "Critical Warning"
+
+read=$(echo "$smartctlout" | grep "Data Units Read")
+written=$(echo "$smartctlout" | grep "Data Units Written")
+
+IFS='['
+
+read=${read:16}
+read=${read// /}
+read=${read//,/}
+read -ra readunits <<< "$read"
+bytes=$((${readunits[0]} * 512000))
+printf "$(echo "$smartctlout" | grep "Data Units Read")"
+printf " [$(($bytes / 1000000000 )) GB]"
+echo " [$(($bytes / 1073741824 )) GiB]"
+
+written=${written:19}
+written=${written// /}
+written=${written//,/}
+read -ra writtenunits <<< "$written"
+bytes=$((${writtenunits[0]} * 512000))
+printf "$(echo "$smartctlout" | grep "Data Units Written")"
+printf " [\e[0;1m$(($bytes / 1000000000 )) GB\e[0m]"
+echo " [$(($bytes / 1073741824 )) GiB]"
+
+IFS=' '
+
+echo "$smartctlout" | grep --after-context=9 "Host Read Commands"
+
+exit 0

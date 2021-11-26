@@ -20,9 +20,16 @@ local beautiful = require("beautiful")
 -- Notification library
 local naughty = require("naughty")
 local menubar = require("menubar")
-local hotkeys_popup = require("awful.hotkeys_popup")
+
+-- Original hotkey popup widget:
+--local hotkeys_popup = require("awful.hotkeys_popup")
+-- Local hotkeys widget (my solution is a bit hacky, but it works, so who cares?)
+-- The locally-configured widget has a modified default width & height
+local hotkeys_popup = require("hotkeys")
+
 -- Enable hotkeys help widget for VIM and other apps when client with a matching name is opened:
-require("awful.hotkeys_popup.keys")
+--require("awful.hotkeys_popup.keys")
+
 -- Load volume widget
 local volume_control = require("volume-control")
 
@@ -129,13 +136,13 @@ volumecfg = volume_control({
 
 tags = {
   names =  {'[>_]','[Web]','[Edit]','[Files]','[5]','[6]','[7]','[8]','[9]'},
-  --names =  {'[>_]','[Web]','[Edit]','[Files]','[Discord]','[Music]','[Edit2]','[Other]','[System]'}, -- Alternate naming scheme
-  --names =  {'>_','Web','Edit','Files','5','6','7','8','System'}, -- Current naming scheme without square brackets
+  --names =  {'[>_]','[Web]','[Edit]','[Files]','[Discord]','[Web2]','[Edit2]','[Other]','[Music]'}, -- Alternate naming scheme
+  --names =  {'>_','Web','Edit','Files','5','6','7','8','9'}, -- Current naming scheme without square brackets
   --names =  {'1','2','3','4','5','6','7','8','9'}, -- Just numbers
   layout = {
     awful.layout.layouts[4],
     awful.layout.layouts[1],
-    awful.layout.layouts[6],
+    awful.layout.layouts[2],
     awful.layout.layouts[6],
     awful.layout.layouts[1],
     awful.layout.layouts[1],
@@ -175,7 +182,9 @@ applicationsmenu = {
 }
 
 mediactrlsmenu = {
-  { "Pause Cmus", function() awful.spawn.with_shell("cmus-remote -u") end },
+  { "Play Media", function() awful.spawn.with_shell("playerctl play") end },
+  { "Pause Media", function() awful.spawn.with_shell("playerctl pause") end },
+  { "Toggle Cmus", function() awful.spawn.with_shell("cmus-remote -u") end },
   { "Next Song", function() awful.spawn.with_shell("cmus-remote -n") end },
   { "Previous Song", function() awful.spawn.with_shell("cmus-remote -r") end },
 }
@@ -381,7 +390,17 @@ root.buttons(
   gears.table.join(
     awful.button({ }, 3, function () mymainmenu:toggle() end),
     awful.button({ }, 4, awful.tag.viewnext),
-    awful.button({ }, 5, awful.tag.viewprev)
+    awful.button({ }, 5, awful.tag.viewprev),
+    
+    --awful.button({ "Shift" }, 3, function () mymainmenu:toggle() end),
+    --awful.button({ "Control" }, 3, function () mymainmenu:toggle() end),
+    --awful.button({ "Mod1" }, 3, function () mymainmenu:toggle() end),
+    --awful.button({ "Mod4" }, 3, function () mymainmenu:toggle() end)
+    -- Restart the keyboard if any of the modkeys are pressed during a right-click event on the "desktop"
+    awful.button({ "Shift" }, 3, function () awful.spawn.with_shell("sudo restartkeyboard") end),
+    awful.button({ "Control" }, 3, function () awful.spawn.with_shell("sudo restartkeyboard") end),
+    awful.button({ "Mod1" }, 3, function () awful.spawn.with_shell("sudo restartkeyboard") end),
+    awful.button({ "Mod4" }, 3, function () awful.spawn.with_shell("sudo restartkeyboard") end)
   )
 )
 
@@ -401,7 +420,7 @@ globalkeys = gears.table.join(
     {description="Show keybinds", group="AwesomeWM"}
   ),
   awful.key(
-    { modkey, "Control" },
+    { modkey, "Shift" },
     "r",
     awesome.restart,
     {description = "Restart Awesome", group = "AwesomeWM"}
@@ -436,6 +455,25 @@ globalkeys = gears.table.join(
     {description = "View next", group = "Tag"}
   ),
   
+  -- Focus on the application to the right of the current one (in the navigation bar)
+  awful.key(
+    { modkey },
+    "Next",
+    function()
+      awful.client.focus.byidx(1)
+    end,
+    {description = "Focus next by index", group = "Client"}
+  ),
+  -- Focus on the application to the left of the current one (in the navigation bar)
+  awful.key(
+    { modkey },
+    "Prior",
+    function()
+      awful.client.focus.byidx(-1)
+    end,
+    {description = "Focus previous by index", group = "Client"}
+  ),
+  
   
   --- Applications ---
   
@@ -444,7 +482,7 @@ globalkeys = gears.table.join(
     { modkey },
     "Return",
     function()
-      awful.spawn(terminal)
+      awful.spawn.with_shell(terminal)
     end,
     {description = "Open terminal", group = "Applications"}
   ),
@@ -452,7 +490,7 @@ globalkeys = gears.table.join(
     { "Mod1", "Control" },
     "Return",
     function()
-      awful.spawn(terminal)
+      awful.spawn.with_shell(terminal)
     end,
     {description = "Open terminal", group = "Applications"}
   ),
@@ -473,6 +511,15 @@ globalkeys = gears.table.join(
       awful.spawn.with_shell("firefox")
     end,
     {description = "Open Firefox", group = "Applications"}
+  ),
+  -- Chromium
+  awful.key(
+    { modkey, "Shift" },
+    "b",
+    function()
+      awful.spawn.with_shell("chromium")
+    end,
+    {description = "Open Chromium", group = "Applications"}
   ),
   -- PCManFM
   awful.key(
@@ -510,14 +557,31 @@ globalkeys = gears.table.join(
     {description = "Open Geany", group = "Applications"}
   ),
   -- Atom text editor
+  --awful.key(
+  --  { modkey },
+  --  "a",
+  --  function()
+  --    awful.spawn.with_shell("atom")
+  --  end,
+  --  {description = "Open Atom", group = "Applications"}
+  --),
+  -- VS Code
   awful.key(
     { modkey },
-    "a",
+    "c",
     function()
-      -- awful.util.spawn("atom")
-      awful.spawn.with_shell("atom")
+      awful.spawn.with_shell("code")
     end,
-    {description = "Open Atom", group = "Applications"}
+    {description = "Open VS Code", group = "Applications"}
+  ),
+  -- LibreOffice
+  awful.key(
+    { modkey },
+    "o",
+    function(c)
+      awful.spawn.with_shell("libreoffice")
+    end,
+    {description = "Open LibreOffice", group = "Applications"}
   ),
   -- Open calculator
   awful.key(
@@ -529,7 +593,7 @@ globalkeys = gears.table.join(
     {description = "Open Calculator", group = "Applications"}
   ),
   
-  -- Run Prompt (Dmenu)
+  -- Run Dmenu
   awful.key(
     { modkey },
     "r",
@@ -539,16 +603,16 @@ globalkeys = gears.table.join(
     {description = "Run Dmenu", group = "Launcher"}
   ),
   awful.key(
-    { modkey, "Shift" },
+    { modkey, "Mod1" },
     "Return",
     function()
       awful.spawn.with_shell("dmenu_run")
     end,
     {description = "Run Dmenu", group = "Launcher"}
   ),
-  -- Run rofi, with only common applications in the list
+  -- Run rofi
   awful.key(
-    { modkey, "Mod1" },
+    { modkey, "Shift" },
     "Return",
     function()
       awful.spawn.with_shell("rofi -show run")
@@ -568,12 +632,12 @@ globalkeys = gears.table.join(
   
   --- Custom Functions ---
   
-  -- Screenshot
+  -- Screenshot (default quality)
   awful.key(
     { modkey },
     "s",
     function()
-      awful.spawn.with_shell("scrot -z -e 'mv $f ~/Files/Images/Screenshots/\"%d-%m-%Y %s.png\"'")
+      awful.spawn.with_shell("scrot -z -e 'mv $f ~/Files/Images/Screenshots/\"%Y-%m-%d %s.png\"'")
     end,
     {description = "Screenshot entire screen", group = "Tools"}
   ),
@@ -581,7 +645,7 @@ globalkeys = gears.table.join(
     { modkey, "Shift" },
     "s",
     function()
-      awful.spawn.with_shell("scrot -z -u -e 'mv $f ~/Files/Images/Screenshots/\"%d-%m-%Y %s.png\"'")
+      awful.spawn.with_shell("scrot -z -u -e 'mv $f ~/Files/Images/Screenshots/\"%Y-%m-%d %s.png\"'")
     end,
     {description = "Screenshot current window", group = "Tools"}
   ),
@@ -589,19 +653,34 @@ globalkeys = gears.table.join(
     { modkey, "Control" },
     "s",
     function()
-      awful.spawn.with_shell("sleep 0.2 && scrot -z -s -e 'mv $f ~/Files/Images/Screenshots/\"%d-%m-%Y %s.png\"'")
+      awful.spawn.with_shell("sleep 0.2 && scrot -z -s -e 'mv $f ~/Files/Images/Screenshots/\"%Y-%m-%d %s.png\"'")
     end,
     {description = "Screenshot a selected area", group = "Tools"}
   ),
-  
-  -- Toggle compositor on/off
+  -- Screenshot (high quality)
+  awful.key(
+    { modkey },
+    "Print",
+    function()
+      awful.spawn.with_shell("scrot -z -q 100 -e 'mv $f ~/Files/Images/Screenshots/\"%Y-%m-%d %s.png\"'")
+    end,
+    {description = "Screenshot entire screen (HQ)", group = "Tools"}
+  ),
+  awful.key(
+    { modkey, "Shift" },
+    "Print",
+    function()
+      awful.spawn.with_shell("scrot -z -q 100 -u -e 'mv $f ~/Files/Images/Screenshots/\"%Y-%m-%d %s.png\"'")
+    end,
+    {description = "Screenshot current window (HQ)", group = "Tools"}
+  ),
   awful.key(
     { modkey, "Control" },
-    "c",
+    "Print",
     function()
-      awful.spawn.with_shell("bash ~/.bin/togglecompositor")
+      awful.spawn.with_shell("sleep 0.2 && scrot -z -q 100 -s -e 'mv $f ~/Files/Images/Screenshots/\"%Y-%m-%d %s.png\"'")
     end,
-    {description = "Start/Stop compositor", group = "Display"}
+    {description = "Screenshot a selected area (HQ)", group = "Tools"}
   ),
   
   -- Audio
@@ -638,12 +717,23 @@ globalkeys = gears.table.join(
     {description = "Mute/Unmute Microphone", group = "Audio"}
   ),
   
+  -- Toggle compositor on/off
+  awful.key(
+    { modkey, "Control" },
+    "c",
+    function()
+      awful.spawn.with_shell("bash ~/.bin/togglecompositor")
+    end,
+    {description = "Start/Stop compositor", group = "Display"}
+  ),
+  
   -- Brightness
   awful.key(
     {},
     "XF86MonBrightnessDown",
     function()
-      awful.spawn.with_shell("bash ~/.bin/decbright 10")
+      --awful.spawn.with_shell("bash ~/.bin/decbright 10")
+      awful.spawn.with_shell("bash ~/.bin/fine-brightness-adjust -1")
     end,
     {description = "Decrease brightness", group = "Display"}
   ),
@@ -651,9 +741,20 @@ globalkeys = gears.table.join(
     {},
     "XF86MonBrightnessUp",
     function()
-      awful.spawn.with_shell("bash ~/.bin/incbright 10")
+      --awful.spawn.with_shell("bash ~/.bin/incbright 10")
+      awful.spawn.with_shell("bash ~/.bin/fine-brightness-adjust 1")
     end,
     {description = "Increase brightness", group = "Display"}
+  ),
+  
+  -- Display management
+  awful.key(
+    {},
+    "XF86Display",
+    function()
+      awful.spawn.with_shell("arandr")
+    end,
+    {description = "Decrease brightness", group = "Display"}
   ),
   
   -- Show the main menu
@@ -664,6 +765,27 @@ globalkeys = gears.table.join(
       mymainmenu:show()
     end,
     {description = "Show main menu", group = "AwesomeWM"}
+  ),
+  
+  -- Show a message when the WiFI card is turned on/off
+  awful.key(
+    {},
+    "XF86WLAN",
+    function()
+      awful.spawn.with_shell("sleep 0.5 && notifywifitoggle")
+    end,
+    {description = "Toggle WiFi", group = "Tools"}
+  ),
+  
+  -- Bring up the Unicde quick-search window
+  awful.key(
+    { modkey },
+    "grave",
+    function()
+      --awful.spawn.with_shell("gjs ~/.bin/unicode.js")
+      awful.spawn.with_shell("firefox /files/Websites/Apache/Programs/UnicodeChars/index.html")
+    end,
+    {description = "Unicode quick-search", group = "Applications"}
   ),
   
   
@@ -914,14 +1036,14 @@ clientkeys = gears.table.join(
     end,
     {description = "Move to master", group = "Client"}
   ),
-  awful.key(
-    { modkey },
-    "o",
-    function(c)
-      c:move_to_screen()
-    end,
-    {description = "Move to screen", group = "Client"}
-  ),
+  --awful.key(
+  --  { modkey },
+  --  "o",
+  --  function(c)
+  --    c:move_to_screen()
+  --  end,
+  --  {description = "Move to screen", group = "Client"}
+  --),
   awful.key(
     { modkey },
     "t",
@@ -1126,7 +1248,7 @@ awful.rules.rules = {
     rule_any = {
       type = { "normal", "dialog" }
     },
-    properties = { titlebars_enabled = false } -- Titlebars diasbled to save space & look nicer
+    properties = { titlebars_enabled = false } -- Titlebars disabled to save space & look nicer
   },
 
   -- Set Firefox to always map on the tag named "2" on screen 1.
@@ -1207,4 +1329,4 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 -- Autostart
 awful.spawn.with_shell('~/.autostart.sh')
 
---awful.spawn.with_shell('pcmanfm --desktop &')
+

@@ -12,14 +12,49 @@ echo "----------------"
 
 
 # Temperatures:
+#sens=$(sensors)
+#thermals=$(cat /proc/acpi/ibm/thermal)
+#thermals2=${thermals/	/        }
+#gputemp=$(echo "$sens" | grep edge)
+#gputemp2=${gputemp:15:6}
+#ssdtemp=$(echo "$sens" | grep Composite)
+#ssdtemp2=${ssdtemp:15:6}
+#zentemp=$(echo "$sens" | grep Tdie)
+#zentemp2=${zentemp:15:6}
+#
+##echo "ACPI ${thermals2/temp/Temp}"
+#echo "CPU ${thermals2/temperatures:        /Temperature:          }"
+#echo "GPU Temperature:          ${gputemp2}"
+#echo "SSD Temperature:          ${ssdtemp2}"
+#echo "ZEN Temperature:          ${zentemp2}"
+
 thermals=$(cat /proc/acpi/ibm/thermal)
 thermals2=${thermals/	/        }
-gputemp=$(($(cat /sys/class/drm/card0/device/hwmon/hwmon*/temp1_input) / 1000))
-ssdtemp=$(sudo smartctl --all /dev/nvme0n1 | grep "Temperature:")
+echo "CPU ${thermals2/temperatures:        /Temperature:          }"
 
-echo "ACPI ${thermals2/temp/Temp}"
-echo "GPU Temperature:          ${gputemp}"
-echo "SSD ${ssdtemp/                        /          }"
+#rawtemp=$(cat /sys/class/hwmon/hwmon8/temp1_input)
+rawtemp=$(cat /sys/class/drm/card0/device/hwmon/hwmon*/temp1_input)
+printf "GPU Temperature:          "
+printf ${rawtemp:0:2}
+printf "."
+printf $(($(($rawtemp / 100)) % 10))
+echo " C"
+
+#rawtemp=$(cat /sys/class/hwmon/hwmon2/temp1_input)
+rawtemp=$(cat /sys/class/nvme/nvme0/hwmon*/temp1_input)
+printf "SSD Temperature:          "
+printf ${rawtemp:0:2}
+printf "."
+printf $(($(($rawtemp / 100)) % 10))
+echo " C"
+
+#rawtemp=$(cat /sys/class/hwmon/hwmon3/temp1_input)
+rawtemp=$(cat /sys/devices/pci0000:00/0000:00:18.3/hwmon/hwmon*/temp1_input)
+printf "ZEN Temperature:          "
+printf ${rawtemp:0:2}
+printf "."
+printf $(($(($rawtemp / 100)) % 10))
+echo " C"
 
 echo "----------------"
 

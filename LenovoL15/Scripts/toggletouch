@@ -14,8 +14,10 @@ then
   xinput disable $ID
   echo "Disabled touchpad"
   # notify-send -a 'Touchpad' 'Disabled' -i input-touchpad
+  notify-send "Disabled touchpad"
 else
   xinput enable $ID
   echo "Enabled touchpad"
   # notify-send -a 'Touchpad' 'Enabled' -i input-touchpad
+  notify-send "Enabled touchpad"
 fi

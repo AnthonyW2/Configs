@@ -3,7 +3,7 @@
 
 
 # Include the home bin directory in the path
-export PATH=$PATH:$HOME/.bin
+export PATH=$PATH:/files/Code/bin
 
 # Ignore duplicate commands when saving to bash history
 export HISTCONTROL=ignoredups:erasedups
@@ -13,26 +13,15 @@ export HISTSIZE=2000
 # Set the LC_ALL locale to C to prevent error messages
 export LC_ALL=C;
 
-# Only do something if running interactively
+# Only do the following if the shell is running interactively
 [[ $- != *i* ]] && return
 
 
 
 # Aliases:
 
-#Current project aliases
-alias chessloc='sloc /srv/http/4D/4DChess && echo "" && echo "" && sloc /srv/http/4D/4DChess/Play/game.js'
-#alias syncchess='syncedits -r=cq60 -p=4DChess -v'
-#alias syncsite='syncedits -r=cq60 -p=MainSite -v'
-#alias syncchessl='syncedits -l -p=4DChess -v'
-#alias syncsitel='syncedits -l -p=MainSite -v'
-alias fragments='mangohud "/files/Games/Fragments of Euclid/FragmentsOfEuclid.x86_64" "$@" -force-opengl'
-alias cdrtx='cd "/files/UMI Robot/UMI-RTX-RT100/PythonAPI"'
-alias cdc++='cd /files/Code/C++'
-
 #ls aliases
 alias ls='ls --color=auto'
-#alias ls='exa'
 alias la='exa -a'
 alias ll='exa -lg'
 alias l='exa -alg'
@@ -44,36 +33,37 @@ alias ~='cd ~'
 #Grep aliases
 alias grep='grep --color=auto'
 
-#Copying aliases
-alias cp='cp -i' #Ask before overwriting an existing file
-
-#Moving aliases
-alias mv='mv -i' #Ask before overwriting an existing file
+#Ask before overwriting/removing a file
+alias cp='cp -i' 
+alias mv='mv -i'
+alias rm='rm -i'
 
 #Because I use this command all the time
 alias x='startx'
 
 #Pacman shortcuts
-#alias update='sudo pacman -Syu'
 alias update='sudo update'
 alias pac='sudo pacman'
 alias updateaur='yay -Sua'
 
-#Battery stuff
+#Battery
 alias battery='sudo tlp-stat -b'
 alias setbat='sudo setchargethresholds'
-alias hbat='setbat 40 60'
+alias hbat='setbat 40 50'
 
 #System monitoring
 alias sysmon='watch -n 0.5 -t sysinfo'
 alias nload='nload wlp3s0 enp2s0f0 lo'
-alias ssdinfo='sudo smartctl -A /dev/nvme0n1'
 
-#Quicker way to launch alsamixer focusing the correct sound card
+#Launch alsamixer focused on the correct sound card
 alias audio='alsamixer -c 1'
 
 #Save a few keypresses when shutting down (this is made redundant by WM keybind)
 alias poweroff='shutdown now'
+
+#Pause/resume a process
+alias pause='kill -s SIGSTOP'
+alias resume='kill -s SIGCONT'
 
 #Run the autostart file manually
 alias autostart='sh ~/.autostart.sh'
@@ -101,6 +91,10 @@ alias logapache='tail -200 /var/log/httpd/access_log | less'
 alias apachelog='tail -f /var/log/httpd/access_log'
 alias apacheerrors='tail -f /var/log/httpd/error_log'
 
+#MariaDB/MySQL database
+alias startdb='sudo systemctl start mariadb'
+alias stopdb='sudo systemctl stop mariadb'
+
 #Mounting
 alias mountwin='sudo mount /dev/nvme0n1p3 /windows -o umask=000'
 alias umountwin='sudo umount /windows'
@@ -108,15 +102,9 @@ alias mountmint='sudo mount /dev/nvme0n1p8 /mnt/mint'
 alias umountmint='sudo umount /mnt/mint'
 alias pmount='sudo mount -o umask=000'
 alias usermount='sudo mount -o umask=000'
-#Remote FS mounting
-alias mountipad='sshfs mobile@192.168.0.155:/ /mnt/ipad'
-alias umountipad='fusermount3 -u /mnt/ipad'
-alias mountcq60='sshfs -p2202 anthony@192.168.0.17:/ /mnt/cq60'
-alias umountcq60='fusermount3 -u /mnt/cq60'
 
-
-#Empty Trash
-alias emptytrash='sudo rm -rf ~/.local/share/Trash/files/*; sudo rm -rf ~/.local/share/Trash/info/*'
+#Empty Trash (Unecessary since I delete files directly)
+#alias emptytrash='sudo rm -rf ~/.local/share/Trash/files/*; sudo rm -rf ~/.local/share/Trash/info/*'
 
 #Faster way to use systemctl
 alias susys='sudo systemctl'
@@ -125,8 +113,11 @@ alias susys='sudo systemctl'
 alias cleanfiles='sudo cleansefiles'
 alias cleansefiles='sudo cleansefiles'
 
+#SSD TRIM alias
+alias trim='sudo fstrim -v'
 
-#Prepend 'sudo' to commands that always require it
+
+#Prepend 'sudo' to commands that always require root permissions
 alias systemctl='sudo systemctl'
 alias powertop='sudo powertop'
 alias restartkeyboard='sudo restartkeyboard'
@@ -144,8 +135,3 @@ alias tlp-stat='sudo tlp-stat'
 #PS1='[Anthony $PWD]\$ ' #Displays full directory path
 #PS1='\e[31m[\e[32mAnthony \e[34m\w\e[31m]\$\e[0m '    #With colours
 PS1='\[\e[0;31m\][\[\e[0;32m\]Anthony \[\e[0;34m\]\w\[\e[0;31m\]]\$\[\e[0m\] '    #With colours (proper formatting to give actual text length in shell)
-
-
-
-#Broot
-#source /home/anthony/.config/broot/launcher/bash/br

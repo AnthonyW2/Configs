@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# 21-2-6
+
+# Set the battery charge thresholds
+
+if [[ ! $1 = "" ]]; then
+  echo $1 > /sys/class/power_supply/BAT0/charge_start_threshold
+fi
+
+if [[ ! $2 = "" ]]; then
+  echo $2 > /sys/class/power_supply/BAT0/charge_stop_threshold
+fi
+
+# Set the lower threshold again, because it it will not be set the first time if the previous upper threshold was smaller
+if [[ ! $1 = "" ]]; then
+  echo $1 > /sys/class/power_supply/BAT0/charge_start_threshold
+fi
+
+echo "Set charge_start_threshold to $(cat /sys/class/power_supply/BAT0/charge_start_threshold)"
+echo "Set charge_stop_threshold to $(cat /sys/class/power_supply/BAT0/charge_stop_threshold)"
+
+exit 0
