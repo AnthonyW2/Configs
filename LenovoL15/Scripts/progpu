@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Use AMDGPU PRO OpenGL driver
+export LD_LIBRARY_PATH="/usr/lib/amdgpu-pro/:${LD_LIBRARY_PATH}"
+
+# Use AMDGPU PRO Vulkan driver
+export VK_ICD_FILENAMES="/usr/share/vulkan/icd.d/amd_pro_icd64.json"
+
+# Run the rest of the command
+"$@"

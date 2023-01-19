@@ -1,7 +1,7 @@
 /*
 Anthony Wilson
 
-userContent.css - Override the CSS on certain webpages
+userContent.css - Override the CSS on some webpages
 */
 
 /* Make the bookmark icons on the New Tab page bigger */
@@ -11,7 +11,17 @@ a.top-site-button div.tile div.icon-wrapper {
 }
 
 /* Remove the pin symbol from the bookmarks on the New Tab page */
-div.icon.icon-pin-small {
+div.title.has-icon.pinned span div.icon.icon-pin-small {
   display: none !important;
 }
+
+/* Remove the search bar without removing the Firefox logo on the New Tab page */
+div.search-wrapper div.search-inner-wrapper {
+  display: none !important;
+}
+
+/* Remove the text in the Firefox logo on the New Tab page */
+/*div.search-wrapper div.logo-and-wordmark div.wordmark {
+  display: none !important;
+}*/
 

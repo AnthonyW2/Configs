@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# This script applies the amdgpu-pro Vulkan driver for a specific application.
+# For example, running "$ provk vkcube" will start vkcube with the AMDGPU PRO Vulkan driver.
+
+provk() {
+    export VK_ICD_FILENAMES="/usr/share/vulkan/icd.d/amd_pro_icd64.json"
+}
+
+provk32() {
+    export VK_ICD_FILENAMES="/usr/share/vulkan/icd.d/amd_pro_icd32.json"
+}
+
+# export dri_driver="amdgpu" # Do not know if needed, there is already a file in drirc.d, is not it sufficient?
+
+
+if [[ $(basename $0) == provk ]]; then
+    provk
+elif [[ $(basename $0) == provk32 ]]; then
+    provk32
+else
+    echo "Unknown function"
+    exit 1
+fi
+
+# Applied variables, now execute the rest of the command
+"$@"

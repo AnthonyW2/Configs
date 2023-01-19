@@ -1,6 +1,7 @@
 --Anthony Wilson's AwesomeWM configuration
 
-
+-- Resources --
+-- https://awesomewm.org/apidoc/documentation/90-FAQ.md.html
 
 
 
@@ -74,7 +75,7 @@ beautiful.init("/home/anthony/.config/awesome/themes/AnthonyW/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
 terminal = "alacritty"
-editor = os.getenv("EDITOR") or "nano"
+editor = os.getenv("EDITOR") or "vim"
 editor_cmd = terminal .. " -e " .. editor
 
 -- Default modkey.
@@ -473,6 +474,23 @@ globalkeys = gears.table.join(
     end,
     {description = "Focus previous by index", group = "Client"}
   ),
+  -- Change the order of applications in the layout
+  awful.key(
+    { modkey, "Shift" },
+    "Next",
+    function()
+      awful.client.swap.byidx(1)
+    end,
+    {description = "Swap with next client by index", group = "Client"}
+  ),
+  awful.key(
+    { modkey, "Shift" },
+    "Prior",
+    function()
+      awful.client.swap.byidx(-1)
+    end,
+    {description = "Swap with previous client by index", group = "Client"}
+  ),
   
   
   --- Applications ---
@@ -517,7 +535,7 @@ globalkeys = gears.table.join(
     { modkey, "Shift" },
     "b",
     function()
-      awful.spawn.with_shell("chromium")
+      awful.spawn.with_shell("cpulimit -l 400 -i chromium")
     end,
     {description = "Open Chromium", group = "Applications"}
   ),
@@ -543,7 +561,7 @@ globalkeys = gears.table.join(
     { modkey },
     "d",
     function()
-      awful.spawn.with_shell("discord")
+      awful.spawn.with_shell("discord --enable-gpu-rasterization")
     end,
     {description = "Open Discord", group = "Applications"}
   ),
@@ -556,15 +574,6 @@ globalkeys = gears.table.join(
     end,
     {description = "Open Geany", group = "Applications"}
   ),
-  -- Atom text editor
-  --awful.key(
-  --  { modkey },
-  --  "a",
-  --  function()
-  --    awful.spawn.with_shell("atom")
-  --  end,
-  --  {description = "Open Atom", group = "Applications"}
-  --),
   -- VS Code
   awful.key(
     { modkey },
@@ -594,14 +603,14 @@ globalkeys = gears.table.join(
   ),
   
   -- Run Dmenu
-  awful.key(
-    { modkey },
-    "r",
-    function()
-      awful.spawn.with_shell("dmenu_run")
-    end,
-    {description = "Run Dmenu", group = "Launcher"}
-  ),
+  -- awful.key(
+  --   { modkey },
+  --   "r",
+  --   function()
+  --     awful.spawn.with_shell("dmenu_run")
+  --   end,
+  --   {description = "Run Dmenu", group = "Launcher"}
+  -- ),
   awful.key(
     { modkey, "Mod1" },
     "Return",
@@ -632,10 +641,18 @@ globalkeys = gears.table.join(
   
   --- Custom Functions ---
   
-  -- Screenshot (default quality)
+  -- Screenshot
   awful.key(
     { modkey },
     "s",
+    function()
+      awful.spawn.with_shell("scrot -z -e 'mv $f ~/Files/Images/Screenshots/\"%Y-%m-%d %s.png\"'")
+    end,
+    {description = "Screenshot entire screen", group = "Tools"}
+  ),
+  awful.key(
+    { modkey },
+    "Print",
     function()
       awful.spawn.with_shell("scrot -z -e 'mv $f ~/Files/Images/Screenshots/\"%Y-%m-%d %s.png\"'")
     end,
@@ -650,6 +667,14 @@ globalkeys = gears.table.join(
     {description = "Screenshot current window", group = "Tools"}
   ),
   awful.key(
+    { modkey, "Shift" },
+    "Print",
+    function()
+      awful.spawn.with_shell("scrot -z -u -e 'mv $f ~/Files/Images/Screenshots/\"%Y-%m-%d %s.png\"'")
+    end,
+    {description = "Screenshot current window", group = "Tools"}
+  ),
+  awful.key(
     { modkey, "Control" },
     "s",
     function()
@@ -657,33 +682,40 @@ globalkeys = gears.table.join(
     end,
     {description = "Screenshot a selected area", group = "Tools"}
   ),
-  -- Screenshot (high quality)
-  awful.key(
-    { modkey },
-    "Print",
-    function()
-      awful.spawn.with_shell("scrot -z -q 100 -e 'mv $f ~/Files/Images/Screenshots/\"%Y-%m-%d %s.png\"'")
-    end,
-    {description = "Screenshot entire screen (HQ)", group = "Tools"}
-  ),
-  awful.key(
-    { modkey, "Shift" },
-    "Print",
-    function()
-      awful.spawn.with_shell("scrot -z -q 100 -u -e 'mv $f ~/Files/Images/Screenshots/\"%Y-%m-%d %s.png\"'")
-    end,
-    {description = "Screenshot current window (HQ)", group = "Tools"}
-  ),
   awful.key(
     { modkey, "Control" },
     "Print",
     function()
-      awful.spawn.with_shell("sleep 0.2 && scrot -z -q 100 -s -e 'mv $f ~/Files/Images/Screenshots/\"%Y-%m-%d %s.png\"'")
+      awful.spawn.with_shell("sleep 0.2 && scrot -z -s -e 'mv $f ~/Files/Images/Screenshots/\"%Y-%m-%d %s.png\"'")
     end,
-    {description = "Screenshot a selected area (HQ)", group = "Tools"}
+    {description = "Screenshot a selected area", group = "Tools"}
+  ),
+  awful.key(
+    {},
+    "XF86Launch2",
+    function()
+      awful.spawn.with_shell("sleep 0.2 && scrot -z -s -e 'mv $f ~/Files/Images/Screenshots/\"%Y-%m-%d %s.png\"'")
+    end,
+    {description = "Screenshot a selected area", group = "Tools"}
   ),
   
   -- Audio
+  awful.key(
+    {},
+    "XF86Go",
+    function()
+      awful.spawn.with_shell("playerctl play")
+    end,
+    {description = "Play media", group = "Audio"}
+  ),
+  awful.key(
+    {},
+    "Cancel",
+    function()
+      awful.spawn.with_shell("playerctl pause")
+    end,
+    {description = "Pause media", group = "Audio"}
+  ),
   awful.key(
     {},
     "XF86AudioRaiseVolume",
@@ -746,15 +778,39 @@ globalkeys = gears.table.join(
     end,
     {description = "Increase brightness", group = "Display"}
   ),
+  awful.key(
+    { modkey },
+    "XF86MonBrightnessDown",
+    function()
+      awful.spawn.with_shell("setbright 0")
+    end,
+    {description = "Lowest brightness", group = "Display"}
+  ),
+  awful.key(
+    { modkey },
+    "XF86MonBrightnessUp",
+    function()
+      awful.spawn.with_shell("setbright 30")
+    end,
+    {description = "Medium brightness", group = "Display"}
+  ),
   
   -- Display management
   awful.key(
     {},
     "XF86Display",
     function()
+      awful.spawn.with_shell("sleep 0.5 && xset dpms force standby")
+    end,
+    {description = "Stand by", group = "Display"}
+  ),
+  awful.key(
+    { modkey },
+    "XF86Display",
+    function()
       awful.spawn.with_shell("arandr")
     end,
-    {description = "Decrease brightness", group = "Display"}
+    {description = "Open arandr", group = "Display"}
   ),
   
   -- Show the main menu
@@ -777,7 +833,33 @@ globalkeys = gears.table.join(
     {description = "Toggle WiFi", group = "Tools"}
   ),
   
-  -- Bring up the Unicde quick-search window
+  -- Interact with Discord
+  awful.key(
+    {},
+    "XF86Messenger",
+    function()
+      awful.spawn.with_shell("xdotool set_desktop 4")
+    end,
+    {description = "Go to Discord", group = "Tools"}
+  ),
+  awful.key(
+    { modkey },
+    "XF86Messenger",
+    function()
+      awful.spawn.with_shell("discordstatus 0")
+    end,
+    {description = "Discord status to Online", group = "Tools"}
+  ),
+  awful.key(
+    { modkey, "Shift" },
+    "XF86Messenger",
+    function()
+      awful.spawn.with_shell("discordstatus 1")
+    end,
+    {description = "Discord status to Idle", group = "Tools"}
+  ),
+  
+  -- Bring up the Unicode quick-search window
   awful.key(
     { modkey },
     "grave",
@@ -793,61 +875,6 @@ globalkeys = gears.table.join(
   
   awful.key(
     { modkey },
-    "j",
-    function()
-      awful.client.focus.byidx(1)
-    end,
-    {description = "Focus next by index", group = "Client"}
-  ),
-  awful.key(
-    { modkey },
-    "k",
-    function()
-      awful.client.focus.byidx(-1)
-    end,
-    {description = "Focus previous by index", group = "Client"}
-  ),
-  -- Layout manipulation
-  awful.key(
-    { modkey, "Shift" },
-    "j",
-    function()
-      awful.client.swap.byidx(1)
-    end,
-    {description = "Swap with next client by index", group = "Client"}
-  ),
-  awful.key(
-    { modkey, "Shift" },
-    "k",
-    function()
-      awful.client.swap.byidx(-1)
-    end,
-    {description = "Swap with previous client by index", group = "Client"}
-  ),
-  awful.key(
-    { modkey, "Control" },
-    "j",
-    function()
-      awful.screen.focus_relative(1)
-    end,
-    {description = "Focus the next screen", group = "Screen"}
-  ),
-  awful.key(
-    { modkey, "Control" },
-    "k",
-    function()
-      awful.screen.focus_relative(-1)
-    end,
-    {description = "Focus the previous screen", group = "Screen"}
-  ),
-  awful.key(
-    { modkey },
-    "u",
-    awful.client.urgent.jumpto,
-    {description = "Jump to urgent client", group = "Client"}
-  ),
-  awful.key(
-    { modkey },
     "l",
     function()
       awful.tag.incmwfact(0.05)
@@ -861,22 +888,6 @@ globalkeys = gears.table.join(
       awful.tag.incmwfact(-0.05)
     end,
     {description = "Decrease master width factor", group = "Layout"}
-  ),
-  awful.key(
-    { modkey, "Shift" },
-    "h",
-    function()
-      awful.tag.incnmaster(1, nil, true)
-    end,
-    {description = "Increase the number of master clients", group = "Layout"}
-  ),
-  awful.key(
-    { modkey, "Shift" },
-    "l",
-    function()
-      awful.tag.incnmaster(-1, nil, true)
-    end,
-    {description = "Decrease the number of master clients", group = "Layout"}
   ),
   awful.key(
     { modkey, "Control" },
@@ -938,7 +949,45 @@ globalkeys = gears.table.join(
   
   --- Unused Keyinds ---
   
-  -- Move client to previous tag
+  -- awful.key(
+  --   { modkey, "Control" },
+  --   "j",
+  --   function()
+  --     awful.screen.focus_relative(1)
+  --   end,
+  --   {description = "Focus the next screen", group = "Screen"}
+  -- ),
+  -- awful.key(
+  --   { modkey, "Control" },
+  --   "k",
+  --   function()
+  --     awful.screen.focus_relative(-1)
+  --   end,
+  --   {description = "Focus the previous screen", group = "Screen"}
+  -- ),
+  -- awful.key(
+  --   { modkey },
+  --   "u",
+  --   awful.client.urgent.jumpto,
+  --   {description = "Jump to urgent client", group = "Client"}
+  -- ),
+  -- awful.key(
+  --   { modkey, "Shift" },
+  --   "h",
+  --   function()
+  --     awful.tag.incnmaster(1, nil, true)
+  --   end,
+  --   {description = "Increase the number of master clients", group = "Layout"}
+  -- ),
+  -- awful.key(
+  --   { modkey, "Shift" },
+  --   "l",
+  --   function()
+  --     awful.tag.incnmaster(-1, nil, true)
+  --   end,
+  --   {description = "Decrease the number of master clients", group = "Layout"}
+  -- ),
+  -- -- Move client to previous tag
   -- awful.key(
   --   { modkey, "Shift" },
   --   "Left",
@@ -959,52 +1008,53 @@ globalkeys = gears.table.join(
   --   awful.tag.history.restore,
   --   {description = "go back", group = "tag"}
   -- ),
-  --awful.key(
-  --  { modkey },
-  --  "w",
-  --  function()
-  --    mymainmenu:show()
-  --  end,
-  --  {description = "Show main menu", group = "AwesomeWM"}
-  --),
-  --awful.key(
-  --  { modkey },
-  --  "Tab",
-  --  function ()
-  --      awful.client.focus.history.previous()
-  --      if client.focus then
-  --          client.focus:raise()
-  --      end
-  --  end,
-  --  {description = "Go back", group = "Client"}
-  --),
-  -- Lua run prompt
-  --awful.key(
-  --  { modkey },
-  --  "x",
-  --  function()
-  --    awful.prompt.run {
-  --      prompt       = "Run Lua code: ",
-  --      textbox      = awful.screen.focused().mypromptbox.widget,
-  --      exe_callback = awful.util.eval,
-  --      history_path = awful.util.get_cache_dir() .. "/history_eval"
-  --    }
-  --  end,
-  --  {description = "Lua execute prompt", group = "AwesomeWM"}
-  --),
-  -- Use keycodes to specify unnamed keys
-  -- Pause Cmus
-  --awful.key(
-  --  {},
-  --  "#172",
-  --  function()
-  --    awful.spawn.with_shell("cmus-remote -u")
-  --  end,
-  --  {description = "Play/Pause", group = "Cmus"}
-  --)
+  -- awful.key(
+  --   { modkey },
+  --   "w",
+  --   function()
+  --     mymainmenu:show()
+  --   end,
+  --   {description = "Show main menu", group = "AwesomeWM"}
+  -- ),
+  -- awful.key(
+  --   { modkey },
+  --   "Tab",
+  --   function ()
+  --       awful.client.focus.history.previous()
+  --       if client.focus then
+  --           client.focus:raise()
+  --       end
+  --   end,
+  --   {description = "Go back", group = "Client"}
+  -- ),
+  -- -- Lua run prompt
+  -- awful.key(
+  --   { modkey },
+  --   "x",
+  --   function()
+  --     awful.prompt.run {
+  --       prompt       = "Run Lua code: ",
+  --       textbox      = awful.screen.focused().mypromptbox.widget,
+  --       exe_callback = awful.util.eval,
+  --       history_path = awful.util.get_cache_dir() .. "/history_eval"
+  --     }
+  --   end,
+  --   {description = "Lua execute prompt", group = "AwesomeWM"}
+  -- ),
+  -- -- Use keycodes to specify unnamed keys
+  -- -- Pause Cmus
+  -- awful.key(
+  --   {},
+  --   "#172",
+  --   function()
+  --     awful.spawn.with_shell("cmus-remote -u")
+  --   end,
+  --   {description = "Play/Pause", group = "Cmus"}
+  -- )
 )
 
 clientkeys = gears.table.join(
+  -- Full screen
   awful.key(
     { modkey },
     "f",
@@ -1014,6 +1064,7 @@ clientkeys = gears.table.join(
     end,
     {description = "Toggle fullscreen", group = "Client"}
   ),
+  -- Close window
   awful.key(
     { modkey, "Shift" },
     "c",
@@ -1022,28 +1073,35 @@ clientkeys = gears.table.join(
     end,
     {description = "Close", group = "Client"}
   ),
+  -- Toggle floating
+  awful.key(
+    { modkey, "Shift" },
+    "f",
+    awful.client.floating.toggle,
+    {description = "Toggle floating", group = "Client"}
+  ),
   awful.key(
     { modkey, "Control" },
     "space",
     awful.client.floating.toggle,
     {description = "Toggle floating", group = "Client"}
   ),
-  awful.key(
-    { modkey, "Control" },
-    "Return",
-    function(c)
-      c:swap(awful.client.getmaster())
-    end,
-    {description = "Move to master", group = "Client"}
-  ),
-  --awful.key(
-  --  { modkey },
-  --  "o",
-  --  function(c)
-  --    c:move_to_screen()
-  --  end,
-  --  {description = "Move to screen", group = "Client"}
-  --),
+  -- awful.key(
+  --   { modkey, "Control" },
+  --   "Return",
+  --   function(c)
+  --     c:swap(awful.client.getmaster())
+  --   end,
+  --   {description = "Move to master", group = "Client"}
+  -- ),
+  -- awful.key(
+  --   { modkey },
+  --   "o",
+  --   function(c)
+  --     c:move_to_screen()
+  --   end,
+  --   {description = "Move to screen", group = "Client"}
+  -- ),
   awful.key(
     { modkey },
     "t",
@@ -1070,25 +1128,25 @@ clientkeys = gears.table.join(
       c:raise()
     end,
     {description = "Maximize", group = "Client"}
-  ),
-  awful.key(
-    { modkey, "Control" },
-    "m",
-    function(c)
-      c.maximized_vertical = not c.maximized_vertical
-      c:raise()
-    end,
-    {description = "Maximize vertically", group = "Client"}
-  ),
-  awful.key(
-    { modkey, "Shift" },
-    "m",
-    function(c)
-      c.maximized_horizontal = not c.maximized_horizontal
-      c:raise()
-    end,
-    {description = "Maximize horizontally", group = "Client"}
   )
+  -- awful.key(
+  --   { modkey, "Control" },
+  --   "m",
+  --   function(c)
+  --     c.maximized_vertical = not c.maximized_vertical
+  --     c:raise()
+  --   end,
+  --   {description = "Maximize vertically", group = "Client"}
+  -- ),
+  -- awful.key(
+  --   { modkey, "Shift" },
+  --   "m",
+  --   function(c)
+  --     c.maximized_horizontal = not c.maximized_horizontal
+  --     c:raise()
+  --   end,
+  --   {description = "Maximize horizontally", group = "Client"}
+  -- )
 )
 
 -- Bind all key numbers to tags.

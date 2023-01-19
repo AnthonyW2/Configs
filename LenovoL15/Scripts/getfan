@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# 20-11-2022
+
+# Get the speed of the fan
+
+cat /proc/acpi/ibm/fan
+
+exit 0

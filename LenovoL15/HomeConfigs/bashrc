@@ -3,7 +3,7 @@
 
 
 # Include the home bin directory in the path
-export PATH=$PATH:/files/Code/bin
+export PATH=$PATH:/files/Code/bin:/usr/bin/custom
 
 # Ignore duplicate commands when saving to bash history
 export HISTCONTROL=ignoredups:erasedups
@@ -38,11 +38,10 @@ alias cp='cp -i'
 alias mv='mv -i'
 alias rm='rm -i'
 
-#Because I use this command all the time
 alias x='startx'
 
 #Pacman shortcuts
-alias update='sudo update'
+alias update='sudo pacman -Syu'
 alias pac='sudo pacman'
 alias updateaur='yay -Sua'
 
@@ -51,12 +50,16 @@ alias battery='sudo tlp-stat -b'
 alias setbat='sudo setchargethresholds'
 alias hbat='setbat 40 50'
 
-#System monitoring
-alias sysmon='watch -n 0.5 -t sysinfo'
-alias nload='nload wlp3s0 enp2s0f0 lo'
+#CPU scaling governor
+alias cpugov='sudo setcpugovernor'
 
-#Launch alsamixer focused on the correct sound card
-alias audio='alsamixer -c 1'
+#System monitoring
+alias sysmon='watch -n 0.5 -t -c sysinfo'
+alias nload='nload wlp3s0 enp2s0f0 lo'
+alias htop2='HTOPRC="/home/anthony/.config/htop/htoprc2" htop'
+alias htopdefault='HTOPRC="/home/anthony/.config/htop/htoprc_default" htop'
+alias externalssdinfo='sudo smartctl -A /dev/$(lsblk -l -f | grep 8ce75a88-3628-4603-bb6e-d202650d24d7 -B 1 | grep -v 8ce75a88-3628-4603-bb6e-d202650d24d7)'
+alias netmon='sudo watch -n 0.3 -t -c netstat -atupen'
 
 #Save a few keypresses when shutting down (this is made redundant by WM keybind)
 alias poweroff='shutdown now'
@@ -64,9 +67,6 @@ alias poweroff='shutdown now'
 #Pause/resume a process
 alias pause='kill -s SIGSTOP'
 alias resume='kill -s SIGCONT'
-
-#Run the autostart file manually
-alias autostart='sh ~/.autostart.sh'
 
 #Re-sync system & hardware clock
 alias resetclock='sudo timedatectl set-ntp true && sudo hwclock --systohc && timedatectl'
@@ -79,15 +79,18 @@ alias getprim='xclip -selection p -o'
 #alias copy='printf $1 | xclip -selection c'
 alias paste='xclip -selection c -o'
 
+#Sleep primary display
+alias standby='sleep 1 && xset dpms force standby'
+
 #SSH server
 alias startssh='sudo systemctl start sshd'
 alias stopssh='sudo systemctl stop sshd'
-alias logssh='journalctl -u sshd | tail -100 | less'
+alias sshlog='journalctl -u sshd | tail -100 | less'
 
 #Apache web server
 alias startapache='sudo systemctl start httpd'
 alias stopapache='sudo systemctl stop httpd'
-alias logapache='tail -200 /var/log/httpd/access_log | less'
+#alias logapache='tail -200 /var/log/httpd/access_log | less'
 alias apachelog='tail -f /var/log/httpd/access_log'
 alias apacheerrors='tail -f /var/log/httpd/error_log'
 
@@ -95,36 +98,74 @@ alias apacheerrors='tail -f /var/log/httpd/error_log'
 alias startdb='sudo systemctl start mariadb'
 alias stopdb='sudo systemctl stop mariadb'
 
+#Create an ISO file from a directory - [ISO file name] [input directory]
+alias mkiso='mkisofs -V "ARCHIVE" -J -r -o'
+
+#Get the current Unix timestamp
+alias timestamp='date +"%s"'
+
+#Get some code stats in a directory/file
+alias loc='tokei'
+
+
 #Mounting
-alias mountwin='sudo mount /dev/nvme0n1p3 /windows -o umask=000'
-alias umountwin='sudo umount /windows'
-alias mountmint='sudo mount /dev/nvme0n1p8 /mnt/mint'
-alias umountmint='sudo umount /mnt/mint'
+alias mount='sudo mount'
+alias umount='sudo umount'
+alias unpowerdrive='udisksctl power-off -b'
+
+alias mountwin='sudo mount -t ntfs3 /dev/nvme0n1p3 /mnt/windows -o umask=000'
+alias umountwin='sudo umount /mnt/windows'
 alias pmount='sudo mount -o umask=000'
-alias usermount='sudo mount -o umask=000'
+alias mountntfs='sudo mount -t ntfs3'
+alias pmountntfs='sudo mount -o umask=000 -t ntfs3'
+
+alias mountexternal='mount -U 8ce75a88-3628-4603-bb6e-d202650d24d7 /usbssd'
+alias umountexternal='umount /usbssd'
+alias mountvms='mount -U f0ea9b5f-3cf1-4fad-8d61-2fa0d37f5b8e /mnt/vm'
+alias umountvms='umount /mnt/vm'
+alias unpowerexternal='udisksctl power-off -b /dev/$(lsblk -l -f | grep 8ce75a88-3628-4603-bb6e-d202650d24d7 -B 1 | grep -v 8ce75a88-3628-4603-bb6e-d202650d24d7)'
+
+#Remote FS mounting
+alias mountipad='sshfs mobile@ipad:/ /mnt/ipad'
+alias umountipad='fusermount3 -u /mnt/ipad'
+alias mountcq60='sshfs -p2202 cq60:/ /mnt/cq60'
+alias umountcq60='fusermount3 -u /mnt/cq60'
+alias mountopi='sshfs -p2204 orangepi:/ /mnt/orangepi'
+alias mountopiw='sshfs -p2204 orangepiw:/ /mnt/orangepi'
+alias mountpi='sshfs -p2204 pi:/ /mnt/orangepi'
+alias umountopi='fusermount3 -u /mnt/orangepi'
+alias umountpi='fusermount3 -u /mnt/orangepi'
+alias mountmcvm='sshfs mc:/ /mnt/net0'
+alias umountmcvm='fusermount3 -u /mnt/net0'
+
 
 #Empty Trash (Unecessary since I delete files directly)
 #alias emptytrash='sudo rm -rf ~/.local/share/Trash/files/*; sudo rm -rf ~/.local/share/Trash/info/*'
 
-#Faster way to use systemctl
-alias susys='sudo systemctl'
-
-#Clean up the permissions and extended attributes of ~/Files
-alias cleanfiles='sudo cleansefiles'
-alias cleansefiles='sudo cleansefiles'
-
 #SSD TRIM alias
 alias trim='sudo fstrim -v'
 
+#Cut down journal size
+alias trimjournal='sudo journalctl --vacuum-size=400M'
 
-#Prepend 'sudo' to commands that always require root permissions
+#Remove unnecessary package file caches
+alias rmpkgcache='sudo paccache -r'
+
+
+#Virtualisation
+alias virsh-qemu='virsh -c qemu:///system'
+
+
+#Connect an N64 controller as a virtual gamepad using an arduino
+alias n64con='/files/Documents/Projects/N64\ Controller/Solution2/connect'
+
+
+#Prepend 'sudo' to commands that usually require root permissions
 alias systemctl='sudo systemctl'
 alias powertop='sudo powertop'
-alias restartkeyboard='sudo restartkeyboard'
-alias mount='sudo mount'
-alias umount='sudo umount'
 alias gparted='sudo gparted'
 alias tlp-stat='sudo tlp-stat'
+alias modprobe='sudo modprobe'
 
 
 

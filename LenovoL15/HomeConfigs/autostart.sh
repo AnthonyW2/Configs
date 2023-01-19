@@ -1,6 +1,5 @@
 picom &
 nitrogen --restore &
-#pcmanfm --desktop &
 
 alacritty &
 
@@ -10,8 +9,10 @@ amixer -c 1 set 'Headphone' 39
 #amixer -c 1 set 'Mic Boost' 1
 #amixer -c 1 set 'Internal Mic Boost' 1
 
+sudo setcpugovernor normal
+
 sleep 2
 
-~/.bin/tempwarning
+/files/Code/bin/tempwarning
 
 exit 0

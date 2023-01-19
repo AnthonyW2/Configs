@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# This script applies the mesa Vulkan driver (vulkan-radeon) for a specific application.
+# For example, running "$ radvk vkcube" will start vkcube with the vulkan-radeon driver.
+
+#radvk() {
+#    export VK_ICD_FILENAMES="/usr/share/vulkan/icd.d/radeon_icd.x86_64.json"
+#}
+#
+#radvk32() {
+#    export VK_ICD_FILENAMES="/usr/share/vulkan/icd.d/radeon_icd.i686.json"
+#}
+#
+#if [[ $(basename $0) == radvk ]]; then
+#    radvk
+#elif [[ $(basename $0) == radvk32 ]]; then
+#    radvk32
+#else
+#    echo "Unknown function"
+#    exit 1
+#fi
+
+# As of August 2021, this is the new way to load vulkan-radeon
+# As of July 2022, this appears to be broken
+#export AMD_VULKAN_ICD=RADV
+export DISABLE_LAYER_AMD_SWITCHABLE_GRAPHICS_1=1
+export VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/radeon_icd.i686.json:/usr/share/vulkan/icd.d/radeon_icd.x86_64.json
+
+# Applied variables, now execute the rest of the command
+"$@"

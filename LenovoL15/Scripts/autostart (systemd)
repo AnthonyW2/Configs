@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# Wait to make sure that this executes late in the boot process
+sleep 1
+
+# Wait until the necessary file exists to set the backlight britness
+while [ ! -f "/sys/class/power_supply/BAT0/charge_start_threshold" ]; do
+  sleep 0.5
+done
+
+# Reset charge thresholds
+echo "Setting charge thresholds..."
+echo 40 > /sys/class/power_supply/BAT0/charge_start_threshold
+echo 50 > /sys/class/power_supply/BAT0/charge_stop_threshold
+echo "Charge thresholds set"
+
+
+# Wait until the necessary file exists to set the backlight britness
+while [ ! -f "/sys/class/backlight/amdgpu_bl0/brightness" ]; do
+  sleep 0.5
+done
+
+# Set backlight write permissions for the "video" group
+echo "Setting backlight permissions..."
+chown root:video /sys/class/backlight/amdgpu_bl0/brightness
+chmod 664 /sys/class/backlight/amdgpu_bl0/brightness
+echo "Backlight permissions set"
+
+echo "Setting backlight brightness..."
+echo 15 > /sys/class/backlight/amdgpu_bl0/brightness
+echo "Backlight brightness set"
+
+# Set fan speed write permissions for the "video" group
+echo "Setting fan speed permissions..."
+chown root:anthony /proc/acpi/ibm/fan
+chmod 664 /proc/acpi/ibm/fan
+echo "Fan speed permissions set"
+
+
+# Remove '$RECYCLE BIN' and 'SYSTEM VOLUME INFORMATION' from files partition (/files/)
+# Now redundant, since I no longer use Windows often enough
+#echo "Removing Windows dirs from files..."
+#echo "Removed Windows dirs from files"
+
